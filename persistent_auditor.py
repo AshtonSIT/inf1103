@@ -43,9 +43,25 @@ def get_valid_input():
     return int(qty_input)
 
 
+def process_delivery(current_total, new_value):
+    return current_total + new_value
+
+
 def main():
 
     orders = load_inventory("inventory.txt")
+
+    history = []
+    total_inventory = 0
+    for line in orders:
+        parts = line.split(',')
+        if len(parts) >= 3 and parts[2].strip().isdigit():
+            qty = int(parts[2].strip())
+            history.append(qty)
+            total_inventory += qty
+
+    failed_attempts = 0
+
     print("--- Persistent Inventory Auditor ---") 
     display_current_orders(orders)
 
@@ -64,7 +80,11 @@ def main():
             print()
             continue
 
-        print(f"Product: {product_name} | Quantity: {qty_result}")
+        quantity = qty_result
+        total_inventory = process_delivery(total_inventory, quantity)
+        history.append(quantity)
+
+        print(f"Total Inventory: {total_inventory} | History: {history}")
 
 if __name__ == "__main__":
     main()
