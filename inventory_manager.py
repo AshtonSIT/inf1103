@@ -53,6 +53,17 @@ def load_inventory():
     return []
 
 
+def save_inventory(inventory):
+    os.makedirs(data_dir, exist_ok=True)
+    try:
+        with open(data_file, "w") as f:
+            json.dump(inventory, f, indent=4)
+        return True
+    except OSError as e:
+        print(f"Error saving inventory to inventory.json: {e}")
+        return False
+
+
 #---------------------------------------------------------------------------
 #Data manipulation (CRUD)
 
@@ -128,8 +139,57 @@ def search_menu(inventory):
 
 
 #---------------------------------------------------------------------------
-#Part b
+#Menu system
+
+def print_menu():
+    print("\nInventory Management Menu")
+    print(line)
+    print("1. Display All Products")
+    print("2. Add New Product")
+    print("3. Update Stock")
+    print("4. Search Product by ID")
+    print("5. Save Inventory to File")
+    print("6. Exit")
+    print(line)
+
+
+def main():
+    print("=" * 40)
+    print("INVENTORY MANAGEMENT SYSTEM")
+    print("=" * 40)
+    inventory = load_inventory()
+
+    try:
+        while True:
+            print_menu()
+            option = input("Enter option: ").strip()
+
+            if option == "1":
+                display_all(inventory)
+            elif option == "2":
+                add_product(inventory)
+            elif option == "3":
+                update_stock(inventory)
+            elif option == "4":
+                search_menu(inventory)
+            elif option == "5":
+                print("Saving inventory...")
+                if save_inventory(inventory):
+                    print("Inventory saved successfully to inventory.json.")
+            elif option == "6":
+                print("Saving inventory before exit...")
+                if save_inventory(inventory):
+                    print("Inventory saved successfully.")
+                print("Thank you for using Inventory Management System.")
+                print("Program terminated.")
+                break
+            else:
+                print("Invalid option. Please enter a number from 1 to 6.")
+    except (EOFError, KeyboardInterrupt):
+        print("\nInput closed. Saving inventory before exit...")
+        save_inventory(inventory)
+        print("Program terminated.")
+
 
 if __name__ == "__main__":
-    inventory = load_inventory()
-    display_all(inventory)
+    main()
