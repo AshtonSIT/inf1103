@@ -1,11 +1,10 @@
+import json
+import os
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.join(base_dir, "data")
+data_file = os.path.join(data_dir, "inventory.json")
 line = "-" * 32
-
-
-inventory = [
-    {"id": "0001", "name": "Apple", "price": 0.80, "stock": 35},
-    {"id": "0002", "name": "Steak", "price": 22.50, "stock": 8},
-    {"id": "0003", "name": "Oil", "price": 8.00, "stock": 10},
-]
 
 
 #---------------------------------------------------------------------------
@@ -34,6 +33,24 @@ def get_int(prompt):
             return value
         except ValueError:
             print("Invalid whole number. Please try again.")
+
+
+#---------------------------------------------------------------------------
+#Data persistence
+
+def load_inventory():
+    if os.path.exists(data_file):
+        print("inventory.json file found.")
+        try:
+            with open(data_file, "r") as f:
+                inventory = json.load(f)
+            print("Inventory loaded successfully.")
+            return inventory
+        except (json.JSONDecodeError, OSError):
+            print("Error reading inventory.json. Starting with an empty inventory.")
+            return []
+    print("inventory.json file not found. Starting with an empty inventory.")
+    return []
 
 
 #---------------------------------------------------------------------------
@@ -111,11 +128,8 @@ def search_menu(inventory):
 
 
 #---------------------------------------------------------------------------
-#Step 2a
+#Part b
 
 if __name__ == "__main__":
-    display_all(inventory)
-    add_product(inventory)
-    update_stock(inventory)
-    search_menu(inventory)
+    inventory = load_inventory()
     display_all(inventory)
