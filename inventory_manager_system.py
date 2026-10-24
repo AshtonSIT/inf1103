@@ -34,3 +34,4 @@ def save_inventory_data(inventory: Inventory, filename=FILENAME) -> None:
         print(f"Inventory saved successfully to '{filename}'.")
     except Exception as e:
         print(f"Error saving inventory: {e}")
+        
