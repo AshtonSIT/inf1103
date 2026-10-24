@@ -37,12 +37,12 @@ def save_inventory_data(inventory: Inventory, filename=FILENAME) -> None:
 
 
 def main():
-    print("\n    OOP Inventory Management System    \n")
+    print("OOP Inventory Management System\n")
 
     inventory = load_inventory_data()
 
     while True:
-        print("\n    Menu    ")
+        print("Menu")
         print("1. Display All Products")
         print("2. Add a Product")
         print("3. Update Stock")
