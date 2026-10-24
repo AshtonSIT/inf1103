@@ -27,3 +27,4 @@ class Inventory:
 
     def get_all_products(self) -> list[Product]:
         return self.__products
+    
