@@ -35,3 +35,4 @@ class Product:
             "price": self.__price,
             "stock": self.__stock,
         }
+    
