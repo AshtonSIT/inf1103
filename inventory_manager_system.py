@@ -1,7 +1,7 @@
 import json
 import os
 
-from product import PhysicalProduct, DigitalProduct
+from product import PhysicalProduct, DigitalProduct, CanBeShipped
 from inventory import Inventory
 
 FILENAME = "inventory.json"
@@ -122,6 +122,9 @@ def main():
             if product:
                 print("\nProduct Found:")
                 product.display_information()
+                print(product.get_fulfilment_info())
+                if isinstance(product, CanBeShipped):
+                    print(f"Shipping cost: ${product.calculate_shipping_cost():.2f}")
                 print("\n")
             else:
                 print("\nProduct not found.")
