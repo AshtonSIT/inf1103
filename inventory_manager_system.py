@@ -1,7 +1,7 @@
 import json
 import os
 
-from product import Product
+from product import PhysicalProduct, DigitalProduct
 from inventory import Inventory
 
 FILENAME = "inventory.json"
@@ -17,12 +17,20 @@ def load_inventory_data(filename=FILENAME) -> Inventory:
         with open(filename, "r") as file:
             data = json.load(file)
             for i in data:
-                product = Product(i["id"], i["name"], i["price"], i["stock"])
+                product_type = i.get("type", "physical").lower()
+
+                if product_type == "digital":
+                    product = DigitalProduct(
+                        i["id"], i["name"], i["price"], i["stock"], i["file_size"]
+                    )
+                else:
+                    product = PhysicalProduct(
+                        i["id"], i["name"], i["price"], i["stock"], i.get("weight", 1.0)
+                    )
                 inventory.add_product(product)
-        print(f"{filename} loaded successfully.\n")
+            print(f"{filename} loaded successfully.\n")
     except Exception as e:
         print(f"Error loading {filename}: {e}\n")
-
     return inventory
 
 
@@ -56,6 +64,15 @@ def main():
             inventory.display_all()
 
         elif choice == "2":
+            print("\nSelect Product Type:")
+            print("1. Physical Product")
+            print("2. Digital Product")
+            p_type_choice = input("Enter choice (1 or 2): ").strip()
+
+            if p_type_choice not in ["1", "2"]:
+                print("Invalid product type. Please enter 1 or 2.")
+                continue
+
             productID = input("Product ID: ").strip()
             if inventory.search_product(productID):
                 print("Error: Product ID already exists.")
@@ -65,11 +82,19 @@ def main():
             try:
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: "))
-                new_product = Product(productID, name, price, stock)
+
+                if p_type_choice == "1":
+                    weight = float(input("Weight (kg): "))
+                    new_product = PhysicalProduct(productID, name, price, stock, weight)
+                else:
+                    file_size = float(input("File Size (MB): "))
+                    new_product = DigitalProduct(productID, name, price, stock, file_size)
+
                 inventory.add_product(new_product)
                 print("\nProduct added successfully.")
+
             except ValueError:
-                print("Error: Invalid price or stock value.")
+                print("Error: Invalid price, stock, weight, or file size value.")
 
         elif choice == "3":
             productID = input("Product ID: ").strip()
