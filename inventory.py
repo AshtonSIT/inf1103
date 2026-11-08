@@ -1,30 +1,42 @@
 from product import Product
 
 class Inventory:
-    def __init__(self):
-        self.__products = []
+    def __init__(self) -> None:
+        #Aggregation collection typed with the abstract base class Product
+        self.products: list[Product] = []
 
-    def add_product(self, product: Product) -> bool:
-        if self.search_product(product.getID()):
-            return False
-        self.__products.append(product)
-        return True
+    def add_product(self, product: Product) -> None:
+        #Adds an existing Product object to the inventory list
+        self.products.append(product)
 
-    def search_product(self, product_id: str) -> Product | None:
-        for p in self.__products:
-            if p.getID().lower() == product_id.lower():
+    def remove_product(self, product_id: str) -> Product | None:
+        #Removes a product from the inventory by its ID and returns the removed product, or None if not found
+        for p in self.products:
+            if p.getID() == product_id:
+                self.products.remove(p)
                 return p
         return None
 
+    def find_product(self, product_id: str) -> Product | None:
+        #Finds a product in the inventory by its ID and returns it, or None if not found
+        for p in self.products:
+            if p.getID() == product_id:
+                return p
+        return None
+
+    #Alias for find_product to maintain backward compatibility
+    def search_product(self, product_id: str) -> Product | None:
+        return self.find_product(product_id)
+
     def display_all(self) -> None:
-        print("\nCurrent Inventory")
-        if not self.__products:
+        #Polymorphically displays all products in the inventory
+        if not self.products:
             print("Inventory is empty.")
-        else:
-            for p in self.__products:
-                p.display_information()
-        print("\n")
+            return
+
+        print("\nCurrent Inventory")
+        for p in self.products:
+            p.display_information()
 
     def get_all_products(self) -> list[Product]:
         return self.__products
-    
