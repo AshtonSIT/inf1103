@@ -12,7 +12,7 @@ class Inventory:
     def remove_product(self, product_id: str) -> Product | None:
         #Removes a product from the inventory by its ID and returns the removed product, or None if not found
         for p in self.products:
-            if p.getID() == product_id:
+            if p.get_id() == product_id:
                 self.products.remove(p)
                 return p
         return None
@@ -20,7 +20,7 @@ class Inventory:
     def find_product(self, product_id: str) -> Product | None:
         #Finds a product in the inventory by its ID and returns it, or None if not found
         for p in self.products:
-            if p.getID() == product_id:
+            if p.get_id() == product_id:
                 return p
         return None
 
@@ -39,4 +39,4 @@ class Inventory:
             p.display_information()
 
     def get_all_products(self) -> list[Product]:
-        return self.__products
+        return self.products

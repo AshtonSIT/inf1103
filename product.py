@@ -15,7 +15,7 @@ class Product(ABC):
         self._price = float(price)
         self._stock = int(stock)
 
-        #2.2: Store reference to Supplier object (composition)
+        #2.2: Store reference to Supplier object (association, Product does not own the Supplier)
         self.supplier: Supplier = supplier
 
     def get_id(self) -> str:
@@ -79,7 +79,8 @@ class PhysicalProduct(Product, CanBeShipped):
             "name": self._name,
             "price": self._price,
             "stock": self._stock,
-            "weight": self._weight
+            "weight": self._weight,
+            "supplier": self.supplier.to_dict()
         }
 
 #DigitalProduct Subclass
@@ -107,5 +108,6 @@ class DigitalProduct(Product):
             "name": self._name,
             "price": self._price,
             "stock": self._stock,
-            "file_size": self._file_size
+            "file_size": self._file_size,
+            "supplier": self.supplier.to_dict()
         }

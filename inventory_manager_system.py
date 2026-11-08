@@ -3,8 +3,16 @@ import os
 
 from product import PhysicalProduct, DigitalProduct, CanBeShipped
 from inventory import Inventory
+from supplier import Supplier
 
 FILENAME = "inventory.json"
+
+def find_supplier(inventory: Inventory, supplier_id: str) -> Supplier | None:
+    #Reuses an existing Supplier object so products from the same supplier share one Supplier (association)
+    for p in inventory.get_all_products():
+        if p.supplier.supplier_id == supplier_id:
+            return p.supplier
+    return None
 
 def load_inventory_data(filename=FILENAME) -> Inventory:
     inventory = Inventory()
@@ -19,13 +27,19 @@ def load_inventory_data(filename=FILENAME) -> Inventory:
             for i in data:
                 product_type = i.get("type", "physical").lower()
 
+                #Older save files have no supplier, so fall back to a placeholder supplier
+                s = i.get("supplier", {"supplier_id": "UNKNOWN", "name": "Unknown Supplier", "contact_email": "-"})
+                supplier = find_supplier(inventory, s["supplier_id"])
+                if supplier is None:
+                    supplier = Supplier(s["supplier_id"], s["name"], s["contact_email"])
+
                 if product_type == "digital":
                     product = DigitalProduct(
-                        i["id"], i["name"], i["price"], i["stock"], i["file_size"]
+                        i["id"], i["name"], i["price"], i["stock"], i["file_size"], supplier
                     )
                 else:
                     product = PhysicalProduct(
-                        i["id"], i["name"], i["price"], i["stock"], i.get("weight", 1.0)
+                        i["id"], i["name"], i["price"], i["stock"], i.get("weight", 1.0), supplier
                     )
                 inventory.add_product(product)
             print(f"{filename} loaded successfully.\n")
@@ -85,10 +99,22 @@ def main():
 
                 if p_type_choice == "1":
                     weight = float(input("Weight (kg): "))
-                    new_product = PhysicalProduct(productID, name, price, stock, weight)
                 else:
                     file_size = float(input("File Size (MB): "))
-                    new_product = DigitalProduct(productID, name, price, stock, file_size)
+
+                supplier_id = input("Supplier ID: ").strip()
+                supplier = find_supplier(inventory, supplier_id)
+                if supplier:
+                    print(f"Using existing supplier: {supplier.name}")
+                else:
+                    supplier_name = input("Supplier Name: ").strip()
+                    supplier_email = input("Supplier Email: ").strip()
+                    supplier = Supplier(supplier_id, supplier_name, supplier_email)
+
+                if p_type_choice == "1":
+                    new_product = PhysicalProduct(productID, name, price, stock, weight, supplier)
+                else:
+                    new_product = DigitalProduct(productID, name, price, stock, file_size, supplier)
 
                 inventory.add_product(new_product)
                 print("\nProduct added successfully.")
@@ -103,8 +129,8 @@ def main():
             if product:
                 print(
                     f"\nProduct Found:\n"
-                    f"Name: {product.getName()}\n"
-                    f"Current Stock: {product.getStock()}\n"
+                    f"Name: {product.get_name()}\n"
+                    f"Current Stock: {product.get_stock()}\n"
                 )
                 try:
                     new_stock = int(input("New Stock Quantity: "))
