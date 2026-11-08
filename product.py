@@ -18,16 +18,16 @@ class Product(ABC):
         #2.2: Store reference to Supplier object (composition)
         self.supplier: Supplier = supplier
 
-    def getID(self) -> str:
+    def get_id(self) -> str:
         return self._product_id
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         return self._name
 
-    def getPrice(self) -> float:
+    def get_price(self) -> float:
         return self._price
 
-    def getStock(self) -> int:
+    def get_stock(self) -> int:
         return self._stock
 
     def update_stock(self, new_quantity: int) -> None:
