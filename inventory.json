@@ -1,0 +1,18 @@
+[
+    {
+        "type": "physical",
+        "id": "1001",
+        "name": "Cinderella",
+        "price": 13.0,
+        "stock": 2,
+        "weight": 0.3
+    },
+    {
+        "type": "digital",
+        "id": "1002",
+        "name": "Coding for Dummies",
+        "price": 25.5,
+        "stock": 12,
+        "file_size": 599.0
+    }
+]
