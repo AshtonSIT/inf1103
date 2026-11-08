@@ -1,18 +1,22 @@
 from abc import ABC, abstractmethod
+from supplier import Supplier
 
-#4.1 Create a CanBeShipped interface with calculate_shipping_cost method
+#CanBeShipped interface
 class CanBeShipped(ABC):
     @abstractmethod
     def calculate_shipping_cost(self) -> float:
         pass
 
-#3.1 Convert Product into an abstract class
+#Product abstract base class
 class Product(ABC):
-    def __init__(self, product_id: str, name: str, price: float, stock: int):
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier):
         self._product_id = product_id
         self._name = name
         self._price = float(price)
         self._stock = int(stock)
+
+        #2.2: Store reference to Supplier object (composition)
+        self.supplier: Supplier = supplier
 
     def getID(self) -> str:
         return self._product_id
@@ -45,22 +49,22 @@ class Product(ABC):
     def to_dict(self) -> dict:
         pass
 
-#1.2 Concrete Class for PhysicalProduct
+#PhysicalProduct Subclass
 class PhysicalProduct(Product, CanBeShipped):
-    def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float, supplier: Supplier):
+        super().__init__(product_id, name, price, stock, supplier)
         self._weight = float(weight)
 
     #weight subclass
     def get_weight(self) -> float:
         return self._weight
 
-    #2.1 & 2.2 Method Overriding (reuse parent logic without code repetition)
+    #Method Overriding (reuse parent logic without code repetition)
     def display_information(self) -> None:
         super().display_information()
         print(f" | Weight: {self._weight:.2f} kg")
 
-    #3.2 Implement the required abstract methods for PhysicalProduct
+    #Implement the required abstract methods for PhysicalProduct
     def get_fulfilment_info(self) -> str:
         return f"Shipment required. Weight: {self._weight:.2f} kg."
 
@@ -78,21 +82,21 @@ class PhysicalProduct(Product, CanBeShipped):
             "weight": self._weight
         }
 
-#1.3 Concrete Class for DigitalProduct
+#DigitalProduct Subclass
 class DigitalProduct(Product):
-    def __init__(self, product_id: str, name: str, price: float, stock: int, file_size: float):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, file_size: float, supplier: Supplier):
+        super().__init__(product_id, name, price, stock, supplier)
         self._file_size = float(file_size)
 
     def get_file_size(self) -> float:
         return self._file_size
 
-    #2.1 & 2.2 Method Overriding (reuse parent logic without code repetition)
+    #Method Overriding (reuse parent logic without code repetition)
     def display_information(self) -> None:
         super().display_information()
         print(f" | File Size: {self._file_size:.1f} MB")
 
-    #3.2 Implement the required abstract methods for DigitalProduct
+    #Implement the required abstract methods for DigitalProduct
     def get_fulfilment_info(self) -> str:
         return f"Digital download available. File size: {self._file_size:.1f} MB."
 
