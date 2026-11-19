@@ -56,6 +56,18 @@ def save_inventory_data(inventory: Inventory, filename=FILENAME) -> None:
         print(f"Error saving inventory: {e}")
 
 
+def get_positive_float(prompt: str) -> float:
+    while True:
+        try:
+            value = float(input(prompt))
+            if value <= 0:
+                print("Please enter a number greater than zero.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a valid number, e.g. 12.50")
+
+
 def main():
     print("OOP Inventory Management System\n")
 
@@ -92,7 +104,7 @@ def main():
 
             name = input("Product Name: ").strip()
             try:
-                price = float(input("Price: "))
+                price = get_positive_float("Price: ")
                 stock = int(input("Stock Quantity: "))
 
                 product_type = "physical" if p_type_choice == "1" else "digital"
@@ -116,7 +128,7 @@ def main():
                 print("\nProduct added successfully.")
 
             except ValueError:
-                print("Error: Invalid price, stock, weight, or file size value.")
+                print("Error: Invalid value. Stock cannot be negative, and weight or file size must be a number.")
 
         elif choice == "3":
             productID = input("Product ID: ").strip()
@@ -133,7 +145,7 @@ def main():
                     product.update_stock(new_stock)
                     print("\nStock updated successfully.")
                 except ValueError:
-                    print("Error: Invalid number entered.")
+                    print("Error: Please enter a whole number of 0 or more.")
             else:
                 print("\nProduct not found.")
 
