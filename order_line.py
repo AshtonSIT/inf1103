@@ -2,8 +2,14 @@ from product import Product
 
 class OrderLine:
     def __init__(self, product: Product, quantity: int) -> None:
+        quantity = int(quantity)
+
+        #Validation: OrderLine protects its own quantity
+        if quantity <= 0:
+            raise ValueError("Quantity must be greater than zero.")
+
         self.product: Product = product
-        self.quantity: int = int(quantity)
+        self.quantity: int = quantity
 
     def calculate_subtotal(self) -> float:
         #Returns product price multiplied by quantity for the order line
