@@ -10,10 +10,19 @@ class CanBeShipped(ABC):
 #Product abstract base class
 class Product(ABC):
     def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier):
+        price = float(price)
+        stock = int(stock)
+
+        #Validation: each rule is owned by Product
+        if price <= 0:
+            raise ValueError("Price must be greater than zero.")
+        if stock < 0:
+            raise ValueError("Stock quantity cannot be negative.")
+
         self._product_id = product_id
         self._name = name
-        self._price = float(price)
-        self._stock = int(stock)
+        self._price = price
+        self._stock = stock
 
         #2.2: Store reference to Supplier object (association, Product does not own the Supplier)
         self.supplier: Supplier = supplier
@@ -31,8 +40,9 @@ class Product(ABC):
         return self._stock
 
     def update_stock(self, new_quantity: int) -> None:
-        if new_quantity >= 0:
-            self._stock = new_quantity
+        if new_quantity < 0:
+            raise ValueError("Stock quantity cannot be negative.")
+        self._stock = new_quantity
 
     def display_information(self) -> None:
         print(
