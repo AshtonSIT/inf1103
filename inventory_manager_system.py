@@ -1,7 +1,8 @@
 import json
 import os
 
-from product import PhysicalProduct, DigitalProduct, CanBeShipped
+from product import CanBeShipped
+from product_factory import ProductFactory
 from inventory import Inventory
 from supplier import Supplier
 
@@ -33,14 +34,11 @@ def load_inventory_data(filename=FILENAME) -> Inventory:
                 if supplier is None:
                     supplier = Supplier(s["supplier_id"], s["name"], s["contact_email"])
 
-                if product_type == "digital":
-                    product = DigitalProduct(
-                        i["id"], i["name"], i["price"], i["stock"], i["file_size"], supplier
-                    )
-                else:
-                    product = PhysicalProduct(
-                        i["id"], i["name"], i["price"], i["stock"], i.get("weight", 1.0), supplier
-                    )
+                #A digital product stores "file_size", a physical product stores "weight"
+                extra = i.get("file_size", i.get("weight", 1.0))
+                product = ProductFactory.create(
+                    product_type, i["id"], i["name"], i["price"], i["stock"], supplier, extra
+                )
                 inventory.add_product(product)
             print(f"{filename} loaded successfully.\n")
     except Exception as e:
@@ -97,10 +95,9 @@ def main():
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: "))
 
-                if p_type_choice == "1":
-                    weight = float(input("Weight (kg): "))
-                else:
-                    file_size = float(input("File Size (MB): "))
+                product_type = "physical" if p_type_choice == "1" else "digital"
+                extra_prompt = "Weight (kg): " if product_type == "physical" else "File Size (MB): "
+                extra = float(input(extra_prompt))
 
                 supplier_id = input("Supplier ID: ").strip()
                 supplier = find_supplier(inventory, supplier_id)
@@ -111,10 +108,9 @@ def main():
                     supplier_email = input("Supplier Email: ").strip()
                     supplier = Supplier(supplier_id, supplier_name, supplier_email)
 
-                if p_type_choice == "1":
-                    new_product = PhysicalProduct(productID, name, price, stock, weight, supplier)
-                else:
-                    new_product = DigitalProduct(productID, name, price, stock, file_size, supplier)
+                new_product = ProductFactory.create(
+                    product_type, productID, name, price, stock, supplier, extra
+                )
 
                 inventory.add_product(new_product)
                 print("\nProduct added successfully.")
